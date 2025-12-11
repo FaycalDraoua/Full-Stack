@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.4.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.amigoscode</groupId>
+	<artifactId>amigoscode-api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<organization>
+		<name>amigoscode</name>
+		<url>https://amigoscode.com</url>
+	</organization>
+	<name>spring-boot-example</name>
+	<description>Demo project for Spring Boot</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>21</java.version>
+		<docker.username>faycaldr</docker.username>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>11.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+<!--			cette dependance injecte le Jdbc et  JdbcTemplate-->
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+
+		<!-- cette dependance Fournit la bibliothèque principale pour exécuter et gérer des conteneurs Docker pendant les tests.-->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>1.20.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!--Cette dépendance est une extension spécifique à PostgreSQL de la bibliothèque Testcontainers.-->
+		<!--Elle inclut le support dédié pour démarrer, configurer et gérer des conteneurs PostgreSQL de manière simplifiée.-->
+		<!--Elle évite d'ajouter manuellement des configurations spécifiques à PostgreSQL (comme l'image Docker ou les paramètres par défaut).-->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>1.20.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<!-- cette dependance Intègre Testcontainers avec JUnit 5 pour automatiser et simplifier le démarrage/arrêt des conteneurs.-->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.20.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!--  pre-integration-test	➤ Démarre l’app Spring Boot (start)
+					  integration-test		➤ Exécute les tests d’intégration
+					  post-integration-test	➤ Arrête l’app Spring Boot (stop)-->
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<!--Le plugin maven-surefire-plugin est responsable d'exécuter les tests pendant mvn test. Donc tous les class java qui finissent
+				avec le mot "Test" si non il va pas la prendre en concideration meme si une class de test-->
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<excludes>
+						<!--Avec cette config, tu dis à Maven : ➔ « Ignore tous les fichiers de test qui finissent par IntegrationTest.
+						java pendant mvn test.
+							.Seuls les tests unitaires (ex : CustomerServiceTest.java) seront exécutés.
+							.Les tests d'intégration (ex : CustomerServiceIntegrationTest.java) seront ignorés.
+
+							PS : meme si j'avais pas exlus les test d'integration comme ici, maven-surfire par defaut execute seulement les
+							 test unitaire et il va les detecter avec le mot cle a la fin ( xxTest, xxTests, xxTestCase )
+							 et ignore les test d'integration qui finisent par convention comme ( xxIntegrationTest, xxIT, xxITCase)»-->
+						<exclude>**/*IntegrationTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId> org.apache.maven.plugins</groupId>
+				<!-- cest le plugin qui va s'en occuper afin d'executer des tests d'integration avec la commande mvn verify -->
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<!-- cella signfi :
+							Utilise les classes compilées du dossier target/classes comme base pour exécuter les tests
+						 C’est une manière explicite de dire au plugin Failsafe où chercher les classes à tester.
+							Souvent, ce champ est automatiquement détecté, donc ce bloc est optionnel (utile dans certains cas spécifiques).-->
+					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+					<!--
+						par defaut, cest a dire sans ajouter cette balise, le plugin maven-failsafe-plugin va executer les class de tests d'integration
+						qui finissent avec  *IT.java ou *ITCase.java.
+
+						Mais en ajoutant cette balise les class de tests d'integration qui finissent avec le mot "IT" ou "IntegrationTest" c'est eux qui vont etre executer
+						si non il va pas la prendre en concideration meme si c une class de test d'integration -->
+					<includes>
+						<include>**/*IntegrationTest.java</include>
+						<include>**/*IT.java</include>
+					</includes>
+				</configuration>
+				<!-- PS : la raison Pour laquel on separe les test unitaire avec surfire et les test dintegration
+				avec failsafe est que :
+					1. les test unitaire doivent s'executer dans la phase "Test" du cycle mvn avant la phase "Package"
+					 	pour assurer le fonction de chaque partie de lappli et puisque cette phase devré etre rapide
+					 	 on utilise le surfire plugin
+
+					 2. les test d'integration viennent dans la phase "verify" apres la phase "package" afin de verifier
+					  le fonction complet de l'application, on a besoin que lappli soit deja construite, et puisque
+					  il est lourd ce test on le separre de la pahse de test la ou il ya just les test unitaire
+					  donc il vient plus tard pour prendre sont temps et tester lentierte de lapplication
+
+					  PS: LA PAHASE "package" de cycle de Mvn cest elle qui cree le .jar de lapplication donc l'application
+					  -->
+         </plugin>
+         <plugin>
+             <groupId>com.google.cloud.tools</groupId>
+             <artifactId>jib-maven-plugin</artifactId>
+             <version>3.4.5</version>
+             <configuration>
+                 <from>
+                     <image>eclipse-temurin:21-jre-alpine</image>
+                     <platforms>
+                         <platform>
+                             <architecture>amd64</architecture>
+                             <os>linux</os>
+                         </platform>
+                         <platform>
+                             <architecture>arm64</architecture>
+                             <os>linux</os>
+                         </platform>
+                     </platforms>
+                 </from>
+                     <to>
+                         <image>docker.io/${docker.username}/${project.artifactId}</image>
+                         <tags>
+                             <name>latest</name>
+                         </tags>
+                     </to>
+                 <container>
+                     <mainClass>com.modelcontroller.Main</mainClass>
+                 </container>
+             </configuration>
+         </plugin>
+  </plugins>
+ </build>
+
+</project>
