@@ -4,7 +4,7 @@ services:
     # on peux tres bien choisir un autre nom que "db" ici. Ce n'est pas un mot cle, predefini.
   db:
     container_name: postgres
-    image: postgres
+    image: postgres:17.6
     environment:
       POSTGRES_USER: amigoscode
       POSTGRES_PASSWORD: password

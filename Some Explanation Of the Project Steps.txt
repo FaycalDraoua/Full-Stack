@@ -1,0 +1,89 @@
+https://textbook.amigoscode.com/
+username: amigoscode
+password: butterandjam
+
+https://www.textbook.amigoscode.com/docs/category/exercises-1?_ga=2.23315516.788179673.1681850378-449976915.1680601401
+
+
+
+Step by step After finiching the all feature dev and the all unit & integration TEST :
+
+
+video 174-184 :  parle de mvn les cycle maven et comment construire le jar file
+
+
+
+	1 CI/CD:
+		A . Create jar file from using maven plugin : apres avoir cree le jar fil (.jar) on peux lancer ce ficher a l'aide de la commande "java -jar name_of_jar_file.jar" mais il faut le que conteneur docker postgres qui contient la BDD de l'application soit lancer, si non l'application ne se lancera pas
+		
+		B. utiliser Jib et la commande mvn compile jib:build afin de construire une image docker et la pousser dans dockerHub
+		
+		C. mainent j'ai l'image de mon application heberge dans dockerHub. je peux ensuite la telecharger et la lancer, mais il existe un probleme, cest que l'application a besoin de se connecter avec l'image docker ou se trouve la bd de l'application.
+Donc ici on peux utiliser 2 manière differente afin de lancer l'application connecter avec la limage de la bd.
+
+		1. utiliser Le cmd et les variable de l'environement docker dans la commande :
+l'image de la bd postgres tourne dans le conteneur postgresContainer, avec les port 5332:5432 ou le port 5332 est le port Hot et le port 5432 est le port du conteneur postgresContainer a linterieur de docker. Et donc nous puisque on va lancer lapplication dans une image docker aussi ca veux dire qu'on a besoin de se connecter avec se port 5432 du conteneur. Pour faire voici les commande :
+			A. Créer le Network : docker network create mynetwork  
+			B. Créer et Lancer la bd dans le conteneur:
+docker run -d --name postgresContainer -p 5332:5432  -e POSTGRES_USER=amigoscode -e POSTGRES_PASSWORD=password --network=mynetwork postgres  
+
+		        C. Créer et Lancer le conteneur de l'application en se connectant avec la bd :
+docker run -d -p 8080:8080 --name applicationFullStack -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgresContainer:5432/customer -e SPRING_DATASOURCE_USERNAME=amigoscode -e SPRING_DATASOURCE_PASSWORD=password --network=mynetwork faycaldr/amigoscode-api
+
+    
+
+		2. Utiliser le fichier Docker compose pour configurer les 2 conteneur Bd et appli, les connecter entre eux, ensuite lancer les 2 conteneur en un seul click. By the way Le docker compose sert a ça, il sert a configurer et lancer plusieur conteneur en meme temps.
+
+
+
+
+	2. PARTIE AWS:
+		
+		A. On a créer les insrance Elastic Beanstalk, Elastic Container Service(ECS) et aussi EC2 et RDS(l'instance base de donnees) afin de deployer l'image de l'application
+		Les Etapes:
+			*Creation de la cle .pem pour se connecter a notre machine sur aws a distance avec ssh
+			*Ensuite on a commencer a créer Une Application sur Elastic Beanstalk, a l'interieur on a :
+			  	* On a selectionne docker comme platforme
+				* Et On a selectione ECS comme Branch pour gerer les image et les conteneur Docker.
+				* Ensuite upload le fichier Dockerrun.aws.json qui contient la config pour telecharger l'image de 					  l'application dautre config de port, memory... et aussi config denvironement pour connecter lappli avec 				  la bd 
+				* Ensuite quelque dautre config...(voir les videos)
+				* Ensuite configurer la BDD, et la on va utiliser le service RDB
+			ET OP ce qui est créer la cest :
+			 1.L'Application Elastic Beanstalk 
+			 2. Un cluster Elastic Container Service ECS
+			 3.Une Instance EC2
+			 4.et une base de donnee instance dans RDS
+		
+		PS. l'image ed l'application est bien faycaldr/amigoscode-api:latest qui se trouve dans dockerHub 
+		
+		B. apres la config des service, on televerse le fichier Dockerrun.aws.json qui contient la config pour telecherge et deloyer l'image de l'appli faycaldr/amigoscode-api:latest et la config d'environement pour connecter l'application avec la base de donnees
+		
+		PS : dans le fichier Dockerrun.aws.json on va trouver ça dans la config d'environement :
+"environment" : [
+        {
+          "name": "spring.datasource.url",
+          "value": "jdbc:postgresql://awseb-e-gvvprxwbjc-stack-awsebrdsdatabase-iillat2bu687.cpqgywo6op5t.ca-central-1.rds.amazonaws.com:5432/customer"
+        }
+      ]
+		le aweb-e-gvvprxwbjc... cest le nom du serveur RDS qui contient la base dde donnees, il nous a été generer apres la config de la base de donnees dans RDS, il se trouve dans le aws.
+
+
+		C. A cette etape on se connecte a notre instance EC2 a distance en SSH et cela grace a putthy, la cle .pem qu'on a generer et telecharger, @ Ip publique de notre instance et le user par defaut ec2-user.
+Ensuite la on est rentrer et on a la main pour gerer notre application lancer dans le conteneur et la base de donnees qui se trouve dans RDS		
+
+		D. Apres, a cette etape il y'avait un probleme, la'application ne trouvait pas la bd customer pour l'utiliser,
+donc il fallait créer la bd, et voila comment on a proceder, ya une petite astuce:
+			
+			* il faut cerrer la bd dans la serveur RDS donc il faut se connecter a la BD de la RDS et le nom du serveur créer par RDS qui contient notre BD et bien sur awseb-e-gvvprxwbjc-stack-awsebrdsdatabase-iillat2bu687.cpqgywo6op5t.ca central-1.rds.amazonaws.com.
+			* Donc pour ce connecter il faut utiliser la commande "psql", et pour cela on a créer un conteneur postgres avec la commande docker run --rm -it postgres:alpine sh
+			* Et la on a linterieur de ce conteneur on peux utiliser la commande psql pour ce connecter au serveur RDS qui contient notre BD et créer la base custumer grace a cette commande "psql -U amigoscode -d postgres -h awseb-...rds.amazonaws.com"
+
+		PS*** Donc on gros 
+		  1. notre application se connecte avec la bd qui se trouve dans le serveur RDS et non pas dans un conteneur docker
+		  2. pour se connecter a rds et créer la BD il faut créer un conteneur postgres pour utiliser la commande psql 
+
+
+
+
+La question mainent, est comment ca se fait que jai lancer un nv conteneur avec la commande docker run --rm -it postgres:alpine bash
+ensuite j'ai pu me connecter avec le user amigoscode et le nom de serveur h de la bd et l'application a fonctionne ?
