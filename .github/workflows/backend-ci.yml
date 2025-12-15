@@ -67,3 +67,5 @@ jobs:
         # - verify : compile + tests unitaires + tests d’intégration
         # -B       : mode batch (CI-friendly)
         # -ntp     : supprime la barre de progression (logs plus propres)
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/customer
