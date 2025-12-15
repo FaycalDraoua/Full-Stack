@@ -85,5 +85,8 @@ donc il fallait créer la bd, et voila comment on a proceder, ya une petite astu
 
 
 
-La question mainent, est comment ca se fait que jai lancer un nv conteneur avec la commande docker run --rm -it postgres:alpine bash
-ensuite j'ai pu me connecter avec le user amigoscode et le nom de serveur h de la bd et l'application a fonctionne ?
+	3.Partie Github Actions
+
+		A. Config CI (test+build)
+
+			* il faut creer a la recine du projet le dossier .github esnuite a linterieur folder worflows enuite creer le fichier de config backend-ci.yml (voir la configurer). la config va lancer un conteneur postgres avec les meme config de la bd passe les etpe mvn clean-verify donc tester le nv code et passe par tous les test , et enfin detruire le conteneur

@@ -1,44 +1,69 @@
-  name: CI - Build Backend
+# Nom du workflow (visible dans l’onglet GitHub Actions)
+name: CI - Build Backend
 
-  on:
-    pull_request:
-      branches:
-        - main
-      paths:
-        - backend/**
+# Déclencheur du workflow
+on:
+  # Le workflow se lance lors d'une Pull Request
+  pull_request:
+    # Seulement si la PR cible la branche main
+    branches:
+      - main
+    # Seulement si des fichiers dans backend/ sont modifiés
+    paths:
+      - backend/**
 
-  jobs:
-    # Label of the container job
-    build:
-      # Containers must run in Linux based operating systems
-      runs-on: ubuntu-latest
-      defaults:
-        run:
-          working-directory: ./backend
-      # Service containers to run with `container-job`
-      services:
-        # Label used to access the service container
-        postgres:
-          # Docker Hub image
-          image: postgres:17.6
-          # Provide the password for postgres
-          env:
-            POSTGRES_USER: amigoscode
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: customer
-          # Set health checks to wait until postgres has started
-          options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
+# Définition des jobs
+jobs:
+  # Nom du job (identifiant interne)
+  build:
+    # Le job s'exécute sur une machine Linux fournie par GitHub
+    runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/checkout@v5
-        - uses: actions/setup-java@v5
-          with:
-            distribution: 'temurin'
-            java-version: '21'
-            cache: 'maven'
-        - name : Build and run Unit/Integration Tests with Maven
-          run: mvn -ntp -B verify
+    # Valeurs par défaut pour toutes les commandes `run`
+    defaults:
+      run:
+        # Toutes les commandes `run:` s'exécutent dans le dossier backend/
+        #Toutes les commandes run: seront exécutées dans le dossier backend/ sans que tu aies à faire cd backend.
+        working-directory: ./backend
+
+    # Déclaration des services Docker
+    services:
+      # Nom du service (hostname accessible depuis les tests)
+      postgres:
+        # Image Docker utilisée pour le service
+        image: postgres:17.6
+
+        # Variables d’environnement passées au conteneur Postgres
+        env:
+          POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL
+          POSTGRES_PASSWORD: postgres      # Mot de passe PostgreSQL
+          POSTGRES_DB: customer            # Base créée automatiquement au démarrage
+
+        # Options Docker supplémentaires
+        # (healthcheck pour attendre que Postgres soit prêt)
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Liste des étapes du job
+    steps:
+      # Étape 1 : récupérer le code source depuis GitHub
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # Étape 2 : installer Java
+      - name: Setup Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'   # Distribution OpenJDK Temurin
+          java-version: '21'        # Version Java
+          cache: 'maven'            # Active le cache Maven pour accélérer les builds
+
+      # Étape 3 : compiler le projet et lancer les tests
+      - name: Build and run Unit / Integration Tests with Maven
+        run: mvn -ntp -B verify
+        # - verify : compile + tests unitaires + tests d’intégration
+        # -B       : mode batch (CI-friendly)
+        # -ntp     : supprime la barre de progression (logs plus propres)
