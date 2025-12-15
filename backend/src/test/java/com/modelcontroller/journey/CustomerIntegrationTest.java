@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -19,6 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@ActiveProfiles("test") pour linstant le profile test est configurer pour url qui sert a connecter github Actionc au dataBase de test pour le CI
+//donc cest le profile par default application.yml qui sera utiliser
+//PS: Avec @ActiveProfiles("test"), Spring va chercher le profile test, d’abord dans src/test/resources, puis dans src/main/resources Si non dépendances externes.
 public class CustomerIntegrationTest {
 
     @Autowired

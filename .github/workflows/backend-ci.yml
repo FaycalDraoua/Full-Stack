@@ -38,9 +38,6 @@ jobs:
           POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL
           POSTGRES_PASSWORD: postgres      # Mot de passe PostgreSQL
           POSTGRES_DB: customer            # Base créée automatiquement au démarrage
-          POSTGRES_URI: jdbc:postgresql://postgres:5432/customer
-
-
 
         # Options Docker supplémentaires
         # (healthcheck pour attendre que Postgres soit prêt)
@@ -70,3 +67,5 @@ jobs:
         # - verify : compile + tests unitaires + tests d’intégration
         # -B       : mode batch (CI-friendly)
         # -ntp     : supprime la barre de progression (logs plus propres)
+        env:
+          SPRING_PROFILES_ACTIVE: test # Active le profil "test" pour utiliser application-test.yml qui contient le bon URL de la BDD qui se trouve dans le workflow de GitHub Actions.

@@ -1,0 +1,42 @@
+
+# Configuration spécifique pour le profil "test CI" afin de pouvoir se connecter à la base de données PostgreSQL creer dans
+# le workflow GitHub Actions.
+# ce qui a etait changer par rapport au fichier application.yml est l'url de la base de données.
+# a ssavoir url: jdbc:postgresql://postgres:5332/customer
+
+#PS:
+  #un application-test.yml override application.yml
+  #une variable SPRING_DATASOURCE_URL override tout
+
+server:
+  #preciser le port d'ecoute du web server
+  port: 8080
+  error:
+    #permetre d'afficher les message d'erreur que nous ajoutant nous meme dans le code a l'utilisateur et non pas lui afficher les message par default.
+    include-message: always
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/customer
+    username: amigoscode
+    password: password
+    driverClassName: org.postgresql.Driver
+  jpa:
+    hibernate:
+      #on peux hover(survolet) le curseur sur la cle"ddl-auto" pour voir la description et les valeur supporter.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  main:
+    #activer ou desactiver le web server. la valeur "none" est pour desactiver le serveur web
+    web-application-type: servlet
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+
