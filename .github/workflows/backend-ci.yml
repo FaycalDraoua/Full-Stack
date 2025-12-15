@@ -38,6 +38,8 @@ jobs:
           POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL
           POSTGRES_PASSWORD: postgres      # Mot de passe PostgreSQL
           POSTGRES_DB: customer            # Base créée automatiquement au démarrage
+        ports:
+          - 5332:5432                     # Mappe le port 5432 du conteneur au port 5332 de l’hôte
 
         # Options Docker supplémentaires
         # (healthcheck pour attendre que Postgres soit prêt)
@@ -67,5 +69,3 @@ jobs:
         # - verify : compile + tests unitaires + tests d’intégration
         # -B       : mode batch (CI-friendly)
         # -ntp     : supprime la barre de progression (logs plus propres)
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/customer
