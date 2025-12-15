@@ -29,3 +29,4 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
+
