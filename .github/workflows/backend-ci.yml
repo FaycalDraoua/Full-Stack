@@ -41,6 +41,7 @@ jobs:
           POSTGRES_URI: jdbc:postgresql://postgres:5432/customer
 
 
+
         # Options Docker supplémentaires
         # (healthcheck pour attendre que Postgres soit prêt)
         options: >-
