@@ -36,7 +36,7 @@ jobs:
         # Variables d’environnement passées au conteneur Postgres
         env:
           POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL
-          POSTGRES_PASSWORD: postgres      # Mot de passe PostgreSQL
+          POSTGRES_PASSWORD: password      # Mot de passe PostgreSQL
           POSTGRES_DB: customer            # Base créée automatiquement au démarrage
         ports:
           - 5332:5432                     # Mappe le port 5432 du conteneur au port 5332 de l’hôte
