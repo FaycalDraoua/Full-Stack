@@ -40,6 +40,7 @@ jobs:
           POSTGRES_DB: customer            # Base créée automatiquement au démarrage
           POSTGRES_URI: jdbc:postgresql://postgres:5432/customer
 
+
         # Options Docker supplémentaires
         # (healthcheck pour attendre que Postgres soit prêt)
         options: >-
