@@ -38,7 +38,8 @@ jobs:
           POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL
           POSTGRES_PASSWORD: password      # Mot de passe PostgreSQL
           POSTGRES_DB: customer            # Base créée automatiquement au démarrage
-                            # l'application se connectera la l'hôte (localhost) sur le port 5332 ensuite redirigé vers le port 5432 du conteneur, comme dans le fichier application.yml
+        ports:
+          - 5332:5432                     # l'application se connectera la l'hôte (localhost) sur le port 5332 ensuite redirigé vers le port 5432 du conteneur, comme dans le fichier application.yml
 
         # Options Docker supplémentaires
         # (healthcheck pour attendre que Postgres soit prêt)
