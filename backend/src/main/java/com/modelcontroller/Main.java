@@ -33,6 +33,7 @@ public class Main {
         ConfigurableApplicationContext applicationContext =  SpringApplication.run(Main.class, args);
 
 
+
         /// Afficher tous les Bean(instances) creer par Spring Boot
         printBean(applicationContext);
     }
