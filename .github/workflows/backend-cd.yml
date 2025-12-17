@@ -51,14 +51,16 @@ jobs:
         # Cette etape construit et pousse l'image docker vers docker hub en utilisant le plugin jib de maven en utilisant le numero de build genere precedemment comme tag de l'image docker
       - name: Build Package Push with Maven
         run: mvn -ntp -B verify -Ddocker.image.tag=${{steps.build-number.outputs.BUILD_NUMBER}} jib:build
-        # Mettre a jour le fichier Dockerrun.aws.json avec le nouveau tag de l'image docker dans le nom de l'image
+
       - name: Update Dockerrun.aws.json api image tag with new build number
-        run: |
+        run: |  # il faut absolument mettre le | apres run: pour indiquer que chaque ligne est une commande a executer
           echo "Dockerrun.aws.json before update tag"
-          cat ../Dockerrun.aws.json
-          sed -i -E 's_(faycaldr/amigoscode-api:)([^"]*)_\1'${{steps.build-number.outputs.BUILD_NUMBER}}'_' ../Dockerrun.aws.json
+          cat Dockerrun.aws.json
+          sed -i -E 's_(faycaldr/amigoscode-api:)([^"]*)_\1'${{steps.build-number.outputs.BUILD_NUMBER}}'_' Dockerrun.aws.json
           echo "Dockerrun.aws.json after update tag"
-          cat ../Dockerrun.aws.json
+          cat Dockerrun.aws.json
+          
+        # Se connecter a AWS et deployer l'application sur Elastic Beanstalk en utilisant le fichier Dockerrun.aws.json mis a jour
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -69,7 +71,8 @@ jobs:
           version_label: ${{ steps.build-number.outputs.BUILD_NUMBER }}
           version_description: ${{github.SHA}}
           region: ${{ secrets.EB_REGION }}
-          deployment_package:  backend/Dockerrun.aws.json
+          deployment_package:  Dockerrun.aws.json
+
       - name: Commit and push Dockerrun.aws.json
         run: |
           git config user.name github-actions
