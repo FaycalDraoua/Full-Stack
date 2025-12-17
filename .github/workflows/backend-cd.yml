@@ -62,7 +62,7 @@ jobs:
           
         # Se connecter a AWS et deployer l'application sur Elastic Beanstalk en utilisant le fichier Dockerrun.aws.json mis a jour
       - name: Deploy to Elastic Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v21
+        uses: einaregilsson/beanstalk-deploy@v22
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
