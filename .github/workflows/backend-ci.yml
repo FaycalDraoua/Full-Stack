@@ -24,6 +24,7 @@ jobs:
       run:
         # Toutes les commandes `run:` s'exécutent dans le dossier backend/
         #Toutes les commandes run: seront exécutées dans le dossier backend/ sans que tu aies à faire cd backend.
+        # Cela permet d'éviter de faire cd backend/ à chaque commande run: car le pom.xml se trouve dans ce dossier.
         working-directory: ./backend
 
     # Déclaration des services Docker
@@ -35,11 +36,11 @@ jobs:
 
         # Variables d’environnement passées au conteneur Postgres
         env:
-          POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL
-          POSTGRES_PASSWORD: password      # Mot de passe PostgreSQL
-          POSTGRES_DB: customer            # Base créée automatiquement au démarrage
+          POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL, doit correspondre au fichier application.yml
+          POSTGRES_PASSWORD: password      # Mot de passe PostgreSQL, doit correspondre au fichier application.yml
+          POSTGRES_DB: customer            # Base créée automatiquement au démarrage, doit correspondre au fichier application.yml
         ports:
-          - 5332:5432                     # l'application se connectera la l'hôte (localhost) sur le port 5332 ensuite redirigé vers le port 5432 du conteneur, comme dans le fichier application.yml
+          - 5332:5432                     # l'application se connectera a l'hôte (localhost) sur le port 5332 ensuite redirigé vers le port 5432 du conteneur, comme dans le fichier application.yml
 
         # Options Docker supplémentaires
         # (healthcheck pour attendre que Postgres soit prêt)
@@ -51,7 +52,7 @@ jobs:
 
     # Liste des étapes du job
     steps:
-      # Étape 1 : récupérer le code source depuis GitHub
+      # Étape 1 : elle clone le code de la branche qui a déclenché le pull request donc le workflow, et copie le code source dans le répertoire de travail par défaut de la machine virtuelle linux.
       - name: Checkout repository
         uses: actions/checkout@v5
 
@@ -59,7 +60,7 @@ jobs:
       - name: Setup Java 21
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'   # Distribution OpenJDK Temurin
+          distribution: 'temurin'   # Distribution OpenJDK Temurin, meme image qu'on a utilise pour docker image
           java-version: '21'        # Version Java
           cache: 'maven'            # Active le cache Maven pour accélérer les builds
 

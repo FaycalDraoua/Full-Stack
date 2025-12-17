@@ -89,4 +89,23 @@ donc il fallait créer la bd, et voila comment on a proceder, ya une petite astu
 
 		A. Config CI (test+build)
 
-			* il faut creer a la recine du projet le dossier .github esnuite a linterieur folder worflows enuite creer le fichier de config backend-ci.yml (voir la configurer). la config va lancer un conteneur postgres avec les meme config de la bd passe les etpe mvn clean-verify donc tester le nv code et passe par tous les test , et enfin detruire le conteneur
+			* il faut creer a la recine du projet le dossier .github esnuite a linterieur folder worflows enuite creer le fichier de config backend-ci.yml (voir la configurer). la config va lancer un conteneur postgres avec les meme config de la bd, passer ensuite les etpe mvn clean-verify donc tester le nv code et passe par tous les test , et enfin detruire le conteneur.
+
+
+      * Ensuite selon la config de notre fichier backend-ci.yml, le workflow se lance uniquement lorsqu'on 
+      	. fait nimporte quelle modif dans le dossier Backend 
+      	. faire esnuite un pull request vers la branche main dans le seveur Github
+
+      * Donc on cree une branche local et distante, on fait des modif sur la branche local, ensuite on poushe sur la meme branche distante et ensuite on cree un pull Request vers la branche main. Et la le github Action se lansera
+
+      PS : au debut ca n'a pas marche pr moi, car il fallait ajouter la config du port dans le fichier backend-ci.yml (port : 5332:5432), exactement comme on la fait localelemnt avec la config dans application.yml et docker compose pour se connecter la bd, on a configurer comme quoi:
+      	
+      	a. l'application Spring Boot (qui s'exécute sur l'hôte) cherche à se connecter à localhost:5332.
+
+				b.L'hôte reçoit cette demande sur le port 5332 et la redirige vers le port 5432 du conteneur postgres.
+
+			Et donc puisque ce fichier va etre executer dans github action pour se connecter a la bd, on donner alors la meme config dans backend-ci.yml port 5332:5432 et la :
+
+				a. Github va creer une Vm linux "ubuntu-latest" selon notre config dans backend-ci.yml, et donc cette Vm va devenir la "localhost" qui ecoute sur le port 5332
+				b. ensuite cette Vm lance a linterieur un conteneur de limage postgres selon notre config tjr dans backend-ci.yml et que ce conteneur va ecouter sur le port 5432
+				

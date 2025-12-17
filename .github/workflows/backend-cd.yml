@@ -1,0 +1,79 @@
+name : CD - Deploy Backend
+
+on:
+  #pour lancer le workflow manuellement depuis l'onglet "Actions" de GitHub
+    workflow_dispatch:
+    push:
+        branches:
+        - main
+        paths:
+        - backend/**
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_USER: amigoscode        # Utilisateur PostgreSQL
+          POSTGRES_PASSWORD: password      # Mot de passe PostgreSQL
+          POSTGRES_DB: customer            # Base créée automatiquement au démarrage
+        ports:
+          - 5332:5432
+        options: >-
+          --health-cmd pg_ready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+        run:
+            working-directory: ./backend
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      # Étape 3 : Se logger à Docker Hub
+      - name : Login to Docker Hub
+        uses: docker/login-action@v2
+        #j'ai cree des secrets(username dans DOCKER_HUB_USERNAME et le password dans DOCKER_HUB_ACCESS_TOKEN) dans mon repo github pour stocker mes identifiants de connexion a docker hub
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      #Generer le numero pour la version de l'imahe docker grace a l'id unique date (jr.mois.year.heure.minute.seconde)
+      - name: Set build number
+        id: build-number
+        run: echo "BUILD_NUMBER=$(date +'%d%m%Y%H%M%S')" >> $GITHUB_ENV
+        # Cette etape construit et pousse l'image docker vers docker hub en utilisant le plugin jib de maven en utilisant le numero de build genere precedemment comme tag de l'image docker
+      - name: Build Package Push with Maven
+        run: mvn -ntp -B verify -Ddocker.image.tag=${{steps build-number.outputs.BUILD_NUMBER}} jib:build
+        # Mettre a jour le fichier Dockerrun.aws.json avec le nouveau tag de l'image docker dans le nom de l'image
+      - name: Update Dockerrun.aws.json api image tag with new build number
+        run:
+          echo "Dockerrun.aws.json before update tag"
+          cat Dockerrun.aws.json
+          sed  -i -E 's_(faycaldr/amigoscode-api:)([^"]*)_\1'${BUILD_NUMBER}'_' Dockerrun.aws.json
+          echo "Dockerrun.aws.json after update tag"
+          cat Dockerrun.aws.json
+      - name: Deploy to Elastic Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ EB_APPLICATION_NAME }}
+          environment_name: ${{ EB_ENVIRONMENT_NAME }}
+          version_label: ${{ steps build-number.outputs.BUILD_NUMBER }}
+          version_description: ${{github.SHA}}
+          region: ${{ EB_REGION }}
+          deployment_package:  backend/Dockerrun.aws.json
+      - name: Commit and push Dockerrun.aws.json
+        run: |
+          git config user.name github-actions
+          git config user.email github-action@github.com
+          git add .
+          git commit -m "Update Dockerrun.aws.json with new image and tag ${{steps build-number.outputs.BUILD_NUMBER}}"
+          git push
