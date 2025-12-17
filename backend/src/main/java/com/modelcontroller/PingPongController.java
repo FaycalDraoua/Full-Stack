@@ -15,6 +15,7 @@ public class PingPongController {
 
 
 
+
     record PingPong(String message){}
 
     @GetMapping("/ping")
