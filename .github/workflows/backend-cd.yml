@@ -22,7 +22,7 @@ jobs:
         ports:
           - 5332:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd pg_isready          
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -47,7 +47,7 @@ jobs:
       #Generer le numero pour la version de l'imahe docker grace a l'id unique date (jr.mois.year.heure.minute.seconde)
       - name: Set build number
         id: build-number
-        run: echo "BUILD_NUMBER=$(date +'%d%m%Y%H%M%S')" >> $GITHUB_ENV
+        run: echo "BUILD_NUMBER=$(date +'%d%m%Y%H%M%S')" >> $GITHUB_OUTPUT
         # Cette etape construit et pousse l'image docker vers docker hub en utilisant le plugin jib de maven en utilisant le numero de build genere precedemment comme tag de l'image docker
       - name: Build Package Push with Maven
         run: mvn -ntp -B verify -Ddocker.image.tag=${{steps.build-number.outputs.BUILD_NUMBER}} jib:build
