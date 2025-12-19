@@ -5,15 +5,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PingPongController {
+
     record PingPong(String message){}
 
     @GetMapping("/ping")
     public PingPong ping(){
         return new PingPong("pong");
 
-
-
     }
+
+    @GetMapping("/pang")
+    public PingPong pang(){
+        return new PingPong("pang");
+    }
+
+
 
 
 }
