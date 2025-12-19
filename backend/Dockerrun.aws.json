@@ -4,7 +4,7 @@
   "containerDefinitions": [
     {
       "name": "amigoscode-api",
-      "image": "faycaldr/amigoscode-api:latest",
+      "image": "faycaldr/amigoscode-api:17122025043319",
       "essential": true,
       "memory": 512,
       "portMappings": [
@@ -16,7 +16,7 @@
       "environment" : [
         {
           "name": "spring.datasource.url",
-          "value": "jdbc:postgresql://awseb-e-gvvprxwbjc-stack-awsebrdsdatabase-iillat2bu687.cpqgywo6op5t.ca-central-1.rds.amazonaws.com:5432/customer"
+          "value": "jdbc:postgresql://awseb-e-mpxadir6ms-stack-awsebrdsdatabase-irxznfuqipsi.cpqgywo6op5t.ca-central-1.rds.amazonaws.com:5432/customer"
         }
       ]
     }
