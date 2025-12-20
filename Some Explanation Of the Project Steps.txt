@@ -108,4 +108,20 @@ donc il fallait créer la bd, et voila comment on a proceder, ya une petite astu
 
 				a. Github va creer une Vm linux "ubuntu-latest" selon notre config dans backend-ci.yml, et donc cette Vm va devenir la "localhost" qui ecoute sur le port 5332
 				b. ensuite cette Vm lance a linterieur un conteneur de limage postgres selon notre config tjr dans backend-ci.yml et que ce conteneur va ecouter sur le port 5432
+
+
+			B. Config CD (deploiment sur aws)
+ici on a créer un fichier backend-cd.yml dans .GitHub/workflow. on configurer les etape suivante :
+	
+	**. par notre configuration de CD les etape se lance une fois un code pousser dans la branche main 
+
+	1. Initialisation de l'Environnement (Checkout & Java)
+Actions/checkout : Récupère le code source depuis la branche main.
+
+Actions/setup-java : Installe le JDK 21 (Temurin) et configure le cache Maven pour accélérer les builds futurs.
+
+Service Postgres : Lance un conteneur temporaire PostgreSQL 17.6 avec user, password et base de donnee customer pour permettre à Maven d'exécuter les tests d'intégration durant la phase de build.
+
+	2. Authentification Docker Hub
+se connecter securiterement à Docker Hub en utilisant des secrets (DOCKER_HUB_USERNAME, DOCKER_HUB_ACCESS_TOKEN) qu'on a créer dans la section secret GitHub Action dans github. Cela permet de pousser l'image privée qu'on va construire.
 				
