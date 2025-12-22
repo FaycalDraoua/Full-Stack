@@ -134,5 +134,5 @@ jobs:
       - name: Message Slack Create a Commit & Push To Guthub. Finish.
         run: >
           curl -X POST -H 'Content-type: application/json' 
-          --data '{"text":"Create a Commit & Push To Guthub. Finish.!"}' 
+          --data '{"text":"Create a Commit & Push To Guthub. Finish.! :party_blob:"}' 
           ${{ secrets.SLACK_WEBHOOK_URL }}
