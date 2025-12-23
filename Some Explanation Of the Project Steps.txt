@@ -122,6 +122,31 @@ Actions/setup-java : Installe le JDK 21 (Temurin) et configure le cache Maven po
 
 Service Postgres : Lance un conteneur temporaire PostgreSQL 17.6 avec user, password et base de donnee customer pour permettre à Maven d'exécuter les tests d'intégration durant la phase de build.
 
+
 	2. Authentification Docker Hub
 se connecter securiterement à Docker Hub en utilisant des secrets (DOCKER_HUB_USERNAME, DOCKER_HUB_ACCESS_TOKEN) qu'on a créer dans la section secret GitHub Action dans github. Cela permet de pousser l'image privée qu'on va construire.
+
+
+	3. Génération du Numéro de Version (Build Number)
+Création d'un identifiant unique basé sur la date et l'heure précise (date +'%d%m%Y%H%M%S'). Ce numéro servira de Tag pour l'image Docker et de Version Label pour AWS.
+
+	
+	4.Build et Push avec Maven (Jib)
+Utilisation du plugin Jib de Google via Maven. Cette étape est cruciale car elle compile le code, crée l'image Docker de l'application Spring Boot et la pousse directement sur Docker Hub avec le numero de version (tag) generer precedement
+
+	
+	5. Mise à jour de la configuration du fichier dockerrun pour AWS
+Dans le fichier Dockerrun.aws.json sur GitHub, On va remplacer l'ancien tag de l'image par le nouveau BUILD_NUMBER. Cela garantit que quand on va uploader ce fichier dockerrun.aws.json dans AWS, Elastic Beanstalk téléchargera toujours la version la plus récente de notre image depuis Docker Hub.
+
+
+	6. Se connecter a AWS et Déploiement sur Elastic Beanstalk
+On se connecte d'abord sur notre instance AWS, en utilisant les secret de GitHub action qui contiennent les donnees de log.
+
+Uploade du fichier Dockerrun.aws.json (le manifeste de déploiement) à AWS.
+
+Action : AWS Elastic Beanstalk lit ce fichier, se connecte à Docker Hub, télécharge ton image faycaldr/amigoscode-api:TAG (drniere version) et relance le conteneur sur ton instance EC2.
+
+	
+	7. Commiter et Synchronisation du Dépôt (Git Push)
+on cree un commit depuis GitHub qui permetera  de garder une trace historique de quelle version de l'image est actuellement déployée en production.
 				

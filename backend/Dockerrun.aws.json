@@ -4,7 +4,7 @@
   "containerDefinitions": [
     {
       "name": "amigoscode-api",
-      "image": "faycaldr/amigoscode-api:17122025043319",
+      "image": "faycaldr/amigoscode-api:19122025220129",
       "essential": true,
       "memory": 512,
       "portMappings": [
