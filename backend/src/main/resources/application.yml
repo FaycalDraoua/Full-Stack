@@ -5,6 +5,10 @@ server:
     #permetre d'afficher les message d'erreur que nous ajoutant nous meme dans le code a l'utilisateur et non pas lui afficher les message par default.
     include-message: always
 
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5332/customer

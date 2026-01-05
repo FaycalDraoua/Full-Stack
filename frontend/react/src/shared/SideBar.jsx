@@ -22,7 +22,7 @@ import { BsFolder2, BsCalendarCheck } from 'react-icons/bs';
 import { FiMenu } from 'react-icons/fi';
 import { RiFlashlightFill } from 'react-icons/ri';
 
-export default function Index({children}) {
+export default function SideBar({children}) {
     const { isOpen, onClose, onOpen } = useDisclosure();
 
     return (
