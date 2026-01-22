@@ -35,7 +35,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         /// addMapping("/api/**") : C'est le périmètre de sécurité. On dit : "Ces règles s'appliquent à toutes les URLs qui commencent par /api/". Le ** signifie "et tout ce qui suit".
         CorsRegistration corsRegistration = registry.addMapping("/api/**");
-        allowedOrigins.forEach(corsRegistration::allowedOrigins);
+        allowedOrigins.forEach(origin -> corsRegistration.allowedOrigins(origin));
         allowedMethods.forEach(corsRegistration::allowedMethods);
 
         /**.forEach(...) : On parcourt la liste des origines (ex: localhost:5173) et des méthodes (ex: GET, POST) qu'on a récupérées dans le .yml.

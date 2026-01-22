@@ -1,9 +1,11 @@
 import { Button } from '@chakra-ui/react'
-import Index from "./shared/SideBar.jsx";
 import {useEffect, useState} from "react";
 import {getCustomers} from "./services/client.js";
-import SideBar from "./shared/SideBar.jsx";
+import SideBar from "./components/shared/SideBar.jsx";
 import { Spinner } from '@chakra-ui/react'
+import CardWithImage from "./components/CustomerCard.jsx";
+
+
 
 function App() {
 
@@ -31,6 +33,7 @@ function App() {
         <Button> Click on me </Button>
         {customers.map((customer,index)=>(
             <p>{customer.name}</p>
+
         ))}
     </SideBar>
     )
