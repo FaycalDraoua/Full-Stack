@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Wrap, WrapItem } from '@chakra-ui/react'
 import {useEffect, useState} from "react";
 import {getCustomers} from "./services/client.js";
 import SideBar from "./components/shared/SideBar.jsx";
@@ -30,11 +30,16 @@ function App() {
 
     return(
     <SideBar>
-        <Button> Click on me </Button>
+        <Wrap spacing='30px' justify='center'>
         {customers.map((customer,index)=>(
-            <p>{customer.name}</p>
-
+            //<p>{customer.name}</p>
+            <WrapItem key={index}>
+                <CardWithImage
+                    {...customer}
+                />
+            </WrapItem>
         ))}
+        </Wrap>
     </SideBar>
     )
 }

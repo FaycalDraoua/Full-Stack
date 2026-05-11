@@ -1,6 +1,7 @@
 package com.modelcontroller.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +14,9 @@ public class CustomerController {
 
     @Autowired
     public CustomerController(CustomerService customerService) {
-    this.customerService = customerService;
+
+        this.customerService = customerService;
+
     }
 
 

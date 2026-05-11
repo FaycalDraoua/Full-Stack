@@ -54,20 +54,33 @@ public class Customer {
     @Column(nullable = false)
     private Integer age;
 
+    /** @Enumerated: cette annotation indique a Hibernate comment stocker les valeurs de l'enum dans la base de données.
+     * Par défaut, si tu ne mets pas cette annotation, JPA stocke l'index (l'ordre) de l'enum. MALE en 0 et FEMALE en 1.
+     * Si demain tu décides d'ajouter une valeur au début de ton Enum (ex: UNKNOWN, MALE, FEMALE), l'index de MALE passerait
+        de 0 à 1. Si tu avais stocké des chiffres, toutes tes données en base seraient faussées ! Avec STRING, "MALE" reste "MALE",
+        peu importe l'ordre dans ton code.
+    */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
+
+
     public Customer() {
     }
 
-    public Customer(String name, String email, Integer age) {
+    public Customer(String name, String email, Integer age, Gender gender) {
         this.name = name;
         this.email = email;
         this.age = age;
+        this.gender = gender;
     }
 
-    public Customer(Integer id, String name, String email, Integer age) {
+    public Customer(Integer id, String name, String email, Integer age, Gender gender) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.age = age;
+        this.gender = gender;
     }
 
     public void setId(Integer id) {
@@ -102,6 +115,11 @@ public class Customer {
         return age;
     }
 
+    public void setGender(Gender gender) {  this.gender = gender; }
+
+    public Gender getGender() { return this.gender; }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -109,12 +127,13 @@ public class Customer {
         return Objects.equals(id, personne.id) &&
                 Objects.equals(name, personne.name) &&
                 Objects.equals(email, personne.email) &&
-                Objects.equals(age, personne.age);
+                Objects.equals(age, personne.age)&&
+                Objects.equals(gender, personne.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, age);
+        return Objects.hash(id, name, email, age, gender);
     }
 
     @Override
@@ -124,6 +143,9 @@ public class Customer {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", age=" + age +
+                ", gender=" + gender +
                 '}';
     }
+
+
 }

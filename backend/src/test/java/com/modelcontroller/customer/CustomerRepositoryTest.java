@@ -48,7 +48,7 @@ class CustomerRepositoryTest extends AbstractTestContainers {
         // Given
         String name = FAKER.name().firstName();
         String email = FAKER.internet().emailAddress();
-        Customer customer = new Customer(name, email, 30);
+        Customer customer = new Customer(name, email, 30,Gender.random());
         underTest.save(customer);
 
         // When
@@ -68,7 +68,8 @@ class CustomerRepositoryTest extends AbstractTestContainers {
         // Given
         String name = FAKER.name().firstName();
         String email = FAKER.internet().emailAddress();
-        Customer customer = new Customer(name, email, 30);
+        Gender gender = Gender.random();
+        Customer customer = new Customer(name, email, 30,gender);
         underTest.save(customer);
 
         Integer id = underTest.findAll().stream()
@@ -87,6 +88,7 @@ class CustomerRepositoryTest extends AbstractTestContainers {
             assertThat(c.getName()).isEqualTo(name);
             assertThat(c.getEmail()).isEqualTo(email);
             assertThat(c.getAge()).isEqualTo(30);
+            assertThat(c.getGender()).isEqualTo(gender);
         });
 
         assertThat(actualEmail).isTrue();

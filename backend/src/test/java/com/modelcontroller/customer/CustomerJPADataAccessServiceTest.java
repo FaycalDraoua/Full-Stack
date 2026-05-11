@@ -91,7 +91,8 @@ class CustomerJPADataAccessServiceTest {
         Customer customer = new Customer(
                 FAKER.name().firstName(),
                 FAKER.internet().emailAddress(),
-                30);
+                30,
+                Gender.random());
 
         // When
         underTest.insertCustomer(customer);
@@ -126,11 +127,12 @@ class CustomerJPADataAccessServiceTest {
 
     @Test
     void updateCustomer() {
-        // Given
+        // Given,
         Customer customer = new Customer(
                 FAKER.name().firstName(),
                 FAKER.internet().emailAddress(),
-                30);
+                30,
+                Gender.random());
 
         // When
         underTest.updateCustomer(customer);

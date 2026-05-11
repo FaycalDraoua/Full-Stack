@@ -90,6 +90,7 @@ public class AbstractTestContainers {
     }
 
     protected static JdbcTemplate getJdbcTemplate() {
+
         return new JdbcTemplate(getDataSource());
     }
 

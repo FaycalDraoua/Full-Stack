@@ -35,12 +35,24 @@ jobs:
             working-directory: ./backend
 
     steps:
+      #C'est l'étape indispensable, Cette action permet de "cloner" ton code source depuis ton dépôt GitHub vers la machine qui exécute le workflow.
       - uses: actions/checkout@v5
 
-      - name: Message Slack Setup GitHub Sha
+      #SHA signifie Secure Hash Algorithm. Dans le monde de Git, c'est l'identifiant unique de ton commit.
+      #Chaque fois que tu fais un commit, Git génère une suite de 40 caractères (ex: e4d12a...).
+      #Les variables ${{ github.xxx }} Ce sont des variables de contexte fournies automatiquement par GitHub Actions
+      #${{ github.sha }} : C'est le fameux code SHA du commit qui a déclenché le workflow
+      #${{ github.event.head_commit.message }} : C'est le message de commit que tu as écrit (ex: "fix: update database connection").
+      - name: slack commit message and sha
         run: >
           curl -X POST -H 'Content-type: application/json' 
-          --data '{"text":"Setup GitHub Sha!"}' 
+          --data '{"text":github: https://github.com/FaycalDraoua/Full-Stack/commits/"${{github.sha}} - ${{github.event.head_commit.message}}"}'
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name : Message slack prgress bare
+        run: >
+          curl -X POST -H 'Content-type: application/json' 
+          --data '{"text":"Deployment started :progress_bar: :fingerscrossed:"}' 
           ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - uses: actions/setup-java@v5

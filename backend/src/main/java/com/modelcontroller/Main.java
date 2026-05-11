@@ -3,6 +3,7 @@ package com.modelcontroller;
 import com.modelcontroller.customer.Customer;
 import com.modelcontroller.customer.CustomerRepository;
 import com.github.javafaker.Faker;
+import com.modelcontroller.customer.Gender;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -57,12 +58,13 @@ public class Main {
 //            customerRepository.saveAll(customers);
 //
 //        };
+
         Random random = new Random();
         return args -> {
             Faker faker = new Faker();
             String firstName = faker.name().firstName();
             String lastName = faker.name().lastName();
-            Customer customer = new Customer(firstName+" "+lastName,firstName+'.'+lastName+"@gmail.com", random.nextInt(100-20+1)+20);
+            Customer customer = new Customer(firstName+" "+lastName,firstName+'.'+lastName+"@gmail.com", random.nextInt(100-20+1)+20, Gender.random());
             customerRepository.save(customer);
         };
     }

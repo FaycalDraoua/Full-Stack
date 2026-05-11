@@ -100,7 +100,7 @@ const SidebarContent = ({ ...props }) => (
 
 
             >
-                DRAOUA
+                Dashboard
             </Text>
             <Icon as={RiFlashlightFill} h={8} w={8}  />
         </Flex>
