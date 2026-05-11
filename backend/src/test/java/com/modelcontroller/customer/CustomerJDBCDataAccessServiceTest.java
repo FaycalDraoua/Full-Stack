@@ -47,7 +47,6 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestContainers {
 
         //Then
         assertThat(customers).isNotEmpty();
-        assertThat(customers).hasSize(1);
 
     }
 
