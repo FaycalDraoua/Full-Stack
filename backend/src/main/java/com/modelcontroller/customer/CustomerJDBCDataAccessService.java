@@ -21,7 +21,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     public List<Customer> selectAllCustomers() {
 
         var sql = """
-                    select id, name, email, age
+                    select id, name, email, age, gender
                     from customer
                     """;
 
@@ -32,7 +32,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     public Optional<Customer> selectCustomerById(Integer id) {
 
         var sql = """
-                select id, name, email, age
+                select id, name, email, age, gender
                 from customer
                 where id = ?
                 """;
@@ -49,10 +49,10 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     @Override
     public void insertCustomer(Customer customer) {
         var sql = """
-                INSERT INTO customer(name, email, age)
-                VALUES (?, ?, ?)
+                INSERT INTO customer(name, email, age, gender)
+                VALUES (?, ?, ?, ?)
                 """;
-        jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getAge());
+        jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getAge(), customer.getGender().name());
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     @Override
     public boolean existPersonWithId(Integer id) {
         var sql = """
-                select id, name, email, age
+                select id, name, email, age, gender
                 from customer
                 where id = ?
                 """;
@@ -92,6 +92,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
     public void updateCustomer(Customer customer) {
 
         Customer actual = selectCustomerById(customer.getId()).orElseThrow();
+
 
         if (customer.getName() != null && !customer.getName().isEmpty() && !customer.getName().equals(actual.getName())) {
             var sql = """
@@ -118,6 +119,17 @@ public class CustomerJDBCDataAccessService implements CustomerDao {
                     where id = ?
                     """;
             jdbcTemplate.update(sql, customer.getAge(), customer.getId());
+
         }
-    }
+
+       if (customer.getGender() != null && !customer.getGender().equals(actual.getGender()) ) {
+           var sql = """
+                   update customer
+                   set gender = ?
+                   where id = ?
+                   """;
+           jdbcTemplate.update(sql, customer.getGender().name(), customer.getId());
+            }
+
+     }
 }

@@ -4,6 +4,7 @@ import com.modelcontroller.customer.Customer;
 import com.modelcontroller.customer.CustomerRegistrationRequest;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
+import com.modelcontroller.customer.Gender;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,11 +45,12 @@ public class CustomerIntegrationTest {
         Faker faker = new Faker();
         Name fakerNa = faker.name();
         String name = faker.name().fullName();
+        Gender gender= Gender.random();
 
         String email = fakerNa.lastName()+"-"+ UUID.randomUUID() + "@foobarhello123.com";
 
         int age = faker.number().numberBetween(18, 100);
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age, gender);
 
         //When, Then
         /// 2. send a post request
@@ -69,7 +71,7 @@ public class CustomerIntegrationTest {
                 .getResponseBody();
 
         /// 4.make sure that customer is present
-        Customer expectedCustomer = new Customer(name, email, age);
+        Customer expectedCustomer = new Customer(name, email, age, gender);
 
         assertThat(allCustomers).usingRecursiveFieldByFieldElementComparatorIgnoringFields("id").contains(expectedCustomer);
 
@@ -103,11 +105,12 @@ public class CustomerIntegrationTest {
         Faker faker = new Faker();
         Name fakerNa = faker.name();
         String name = faker.name().fullName();
+        Gender gender= Gender.random();
 
         String email = fakerNa.lastName()+"-"+ UUID.randomUUID() + "@foobarhello123.com";
 
         int age = faker.number().numberBetween(18, 100);
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age, gender);
 
         //When, Then
         /// 2. send a post request
@@ -128,7 +131,7 @@ public class CustomerIntegrationTest {
                 .getResponseBody();
 
         /// 4.make sure that customer is present
-        Customer expectedCustomer = new Customer(name, email, age);
+        Customer expectedCustomer = new Customer(name, email, age, gender);
 
         assertThat(allCustomers).usingRecursiveFieldByFieldElementComparatorIgnoringFields("id").contains(expectedCustomer);
 
@@ -175,8 +178,9 @@ public class CustomerIntegrationTest {
         String name = fakerNAme.fullName();
         String email = fakerNAme.lastName()+"-"+"@addForUpdateTestInteg.com";
         int age = faker.number().numberBetween(18, 100);
+        Gender gender= Gender.random();
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(name, email, age, gender);
 
         /// 2. send a post request
         webTestClient.post().uri("/api/v1/customers")
@@ -206,7 +210,7 @@ public class CustomerIntegrationTest {
         String newName = fakerNAme.fullName();
         int newAge = faker.number().numberBetween(18, 100);
 
-        CustomerRegistrationRequest updateRequest = new CustomerRegistrationRequest(newName, email, newAge);
+        CustomerRegistrationRequest updateRequest = new CustomerRegistrationRequest(newName, email, newAge, gender);
 
         /// 6. send a put request
         webTestClient.put().uri("/api/v1/customers/{customerId}", id)
@@ -217,7 +221,7 @@ public class CustomerIntegrationTest {
                 .expectStatus().isOk();
 
         /// 7. get customer by id
-        Customer expectedCustomer = new Customer(newName, email, newAge);
+        Customer expectedCustomer = new Customer(newName, email, newAge, gender);
         expectedCustomer.setId(id);
 
         Customer customerRecup = webTestClient.get().uri("/api/v1/customers/{customerId}", id)

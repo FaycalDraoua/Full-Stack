@@ -29,6 +29,7 @@ class CustomerServiceTest {
 
     @Mock
     private CustomerDao customerDao;
+
     private CustomerService underTest;
 
     @BeforeEach
@@ -67,7 +68,7 @@ class CustomerServiceTest {
     void canGetCustomer() {
         // Given
         int id = 10;
-        Customer customer = new Customer(id, "Alex", "alex@gmail.com", 19);
+        Customer customer = new Customer(id, "Alex", "alex@gmail.com", 19,Gender.random());
         when(customerDao.selectCustomerById(10)).thenReturn(Optional.of(customer));
 
         // When
@@ -93,7 +94,7 @@ class CustomerServiceTest {
     void canAddCustomer() {
         // Given
         String email = "alex@gmail.com";
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest("Alex", email, 19);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest("Alex", email, 19, Gender.Male);
         when(customerDao.existePersonWithEmail(email)).thenReturn(false);
 
         // When
@@ -117,13 +118,14 @@ class CustomerServiceTest {
         assertThat(capturedCustomer.getEmail()).isEqualTo(email);
         assertThat(capturedCustomer.getName()).isEqualTo(request.name());
         assertThat(capturedCustomer.getAge()).isEqualTo(request.age());
+        assertThat(capturedCustomer.getGender()).isEqualTo(request.gender());
     }
 
     @Test
     void willReturnThrowWhenEmailExistsWhileAddingCustomer() {
         // Given
         String email = "alex@gmail.com";
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest("Alex", email, 19);
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest("Alex", email, 19, Gender.Male);
         when(customerDao.existePersonWithEmail(email)).thenReturn(true);
 
         // Then
@@ -166,8 +168,8 @@ class CustomerServiceTest {
         // Given
         Integer id = 10;
         String email = "Alex@gmail.com";
-        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Alex", email, 19);
-        Customer customer = new Customer(id, "Boby", "Boby@gmail.com", 23);
+        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Alex", email, 19, Gender.Male);
+        Customer customer = new Customer(id, "Boby", "Boby@gmail.com", 23, Gender.Male);
 
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
         when(customerDao.existePersonWithEmail(email)).thenReturn(false);
@@ -185,6 +187,8 @@ class CustomerServiceTest {
         assertThat(capturedCustomer.getEmail()).isEqualTo(email);
         assertThat(capturedCustomer.getName()).isEqualTo(request.name());
         assertThat(capturedCustomer.getAge()).isEqualTo(request.age());
+        assertThat(capturedCustomer.getGender()).isEqualTo(request.gender());
+        assertThat(capturedCustomer.getGender()).isEqualTo(request.gender());
     }
 
     @Test
@@ -192,8 +196,8 @@ class CustomerServiceTest {
         // Given
         Integer id = 10;
         String email = "Alex@gmail.com";
-        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Alex", email, 20);
-        Customer customer = new Customer(id, "Boby", email, 20);
+        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Alex", email, 20, Gender.Male);
+        Customer customer = new Customer(id, "Boby", email, 20,Gender.Male);
 
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
@@ -210,6 +214,8 @@ class CustomerServiceTest {
         assertThat(capturedCustomer.getEmail()).isEqualTo(email);
         assertThat(capturedCustomer.getName()).isEqualTo(request.name());
         assertThat(capturedCustomer.getAge()).isEqualTo(customer.getAge());
+        assertThat(capturedCustomer.getGender()).isEqualTo(customer.getGender());
+        assertThat(capturedCustomer.getGender()).isEqualTo(request.gender());
     }
 
     @Test
@@ -217,8 +223,8 @@ class CustomerServiceTest {
         // Given
         Integer id = 10;
         String email = "Alex@gmail.com";
-        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Alex", email, 20);
-        Customer customer = new Customer(id, "Boby", "Boby@gmail.com", 20);
+        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Alex", email, 20, Gender.Male);
+        Customer customer = new Customer(id, "Boby", "Boby@gmail.com", 20, Gender.Male);
 
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
         when(customerDao.existePersonWithEmail(email)).thenReturn(true);
@@ -234,8 +240,8 @@ class CustomerServiceTest {
         // Given
         Integer id = 10;
         String email = "Alex@gmail.com";
-        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Boby", email, 20);
-        Customer customer = new Customer(id, "Boby", email, 20);
+        CustomerUpdateRequest request = new CustomerUpdateRequest(id, "Boby", email, 20, Gender.Male);
+        Customer customer = new Customer(id, "Boby", email, 20, Gender.Male);
 
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 

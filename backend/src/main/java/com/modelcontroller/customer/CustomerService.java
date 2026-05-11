@@ -20,7 +20,9 @@ public class CustomerService {
      */
     @Autowired
     public CustomerService(@Qualifier("jdbc") CustomerDao customerDao) {
+
         this.customerDao = customerDao;
+
     }
 
     public List<Customer> getAllCustomers() {
@@ -47,7 +49,8 @@ public class CustomerService {
         customerDao.insertCustomer(new Customer(
                 customerRegistrationRequest.name(),
                 customerRegistrationRequest.email(),
-                customerRegistrationRequest.age()
+                customerRegistrationRequest.age(),
+                customerRegistrationRequest.gender()
         ));
     }
 
@@ -83,6 +86,11 @@ public class CustomerService {
             customer.setAge(request.age());
             change = true;
         }
+
+        if(request.gender() != null && !request.gender().equals(customer.getGender())) {
+            customer.setGender(request.gender());
+            change = true;
+            }
 
         if (!change) {
             throw new RequestValidationException("Aucune donnée modifiée");
