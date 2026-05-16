@@ -21,7 +21,7 @@ services:
     # le service de l'api
   amigoscode-api:
     container_name: amigoscode-api
-    image: faycaldr/amigoscode-api
+    image: faycaldr/amigoscode-api:11052026024822
     environment:
       spring.datasource.url: jdbc:postgresql://db:5432/customer
     # 8088 est le port d'ecoute pour l'appli sur la machine hôte(localhost)
